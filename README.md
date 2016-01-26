@@ -11,39 +11,43 @@ keys are generated in either dotted style (e.g. a.b.1.c) or Rails-like (e.g. a[b
 
 You can flatten JSON strings.
 
-    nested := `{
-      "one": {
-        "two": [
-          "2a",
-          "2b"
-        ]
-      },
-      "side": "value"
-    }`
-    
-    flat, err := FlattenString(nested, "", DOT_STYLE)
-    
-    // output: `{ "one.two.0": "2a", "one.two.1": "2b", "side": "value" }`
+```go
+nested := `{
+  "one": {
+    "two": [
+      "2a",
+      "2b"
+    ]
+  },
+  "side": "value"
+}`
+
+flat, err := FlattenString(nested, "", DOT_STYLE)
+
+// output: `{ "one.two.0": "2a", "one.two.1": "2b", "side": "value" }`
+```
 
 Or Go maps directly.
 
-    t := map[string]interface{}{
-       "a": "b",
-       "c": map[string]interface{}{
-           "d": "e",
-           "f": "g",
-       },
-       "z": 1.4567
-    }
-    
-    flat, err := Flatten(nested, "", RAILS_STYLE)
-    
-    // output:
-    // map[string]interface{}{
-    //  "a":    "b",
-    //  "c[d]": "e",
-    //  "c[f]": "g",
-    //  "z":    1.4567,
-    // }
+```go
+t := map[string]interface{}{
+   "a": "b",
+   "c": map[string]interface{}{
+       "d": "e",
+       "f": "g",
+   },
+   "z": 1.4567
+}
+
+flat, err := Flatten(nested, "", RAILS_STYLE)
+
+// output:
+// map[string]interface{}{
+//  "a":    "b",
+//  "c[d]": "e",
+//  "c[f]": "g",
+//  "z":    1.4567,
+// }
+```
 
 See [godoc](https://godoc.org/github.com/jeremywohl/flatten) for API.
