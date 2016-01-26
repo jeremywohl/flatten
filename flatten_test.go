@@ -120,8 +120,8 @@ func TestFlattenString(t *testing.T) {
 			DOT_STYLE,
 		},
 		{
-			`{ "number": 1.4567, "bool": true, "a": { "b" : { "c" : { "d" : "e" } } } }`,
-			`{ "number": 1.4567, "bool": true, "a.b.c.d": "e" }`,
+			`{ "a": { "b" : { "c" : { "d" : "e" } } }, "number": 1.4567, "bool": true }`,
+			`{ "a.b.c.d": "e", "bool": true, "number": 1.4567 }`,
 			"",
 			DOT_STYLE,
 		},
