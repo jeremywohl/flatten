@@ -15,7 +15,7 @@
 //	  "side": "value"
 //	}`
 //
-//	flat, err := FlattenString(nested, "", DOT_STYLE)
+//	flat, err := FlattenString(nested, "", DotStyle)
 //
 //	// output: `{ "one.two.0": "2a", "one.two.1": "2b", "side": "value" }`
 //
@@ -30,7 +30,7 @@
 //		"z": 1.4567
 //	}
 //
-//	flat, err := Flatten(nested, "", RAILS_STYLE)
+//	flat, err := Flatten(nested, "", RailsStyle)
 //
 //	// output:
 //	// map[string]interface{}{
@@ -52,11 +52,13 @@ import (
 type SeparatorStyle int
 
 const (
+	_ SeparatorStyle = iota
+
 	// Separate nested key components with dots, e.g. "a.b.1.c.d"
-	DOT_STYLE SeparatorStyle = iota
+	DotStyle
 
 	// Separate ala Rails, e.g. "a[b][c][1][d]"
-	RAILS_STYLE
+	RailsStyle
 )
 
 // Nested input must be a map or slice
@@ -142,9 +144,9 @@ func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
 		key += subkey
 	} else {
 		switch style {
-		case DOT_STYLE:
+		case DotStyle:
 			key += "." + subkey
-		case RAILS_STYLE:
+		case RailsStyle:
 			key += "[" + subkey + "]"
 		}
 	}

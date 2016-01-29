@@ -47,7 +47,7 @@ func TestFlatten(t *testing.T) {
 				"bool":         true,
 			},
 			"",
-			DOT_STYLE,
+			DotStyle,
 		},
 		{
 			`{
@@ -77,7 +77,7 @@ func TestFlatten(t *testing.T) {
 				"n1[alist][3][e]": "another",
 			},
 			"",
-			RAILS_STYLE,
+			RailsStyle,
 		},
 		{
 			`{ "a": { "b": "c" }, "e": "f" }`,
@@ -86,7 +86,7 @@ func TestFlatten(t *testing.T) {
 				"p:e":   "f",
 			},
 			"p:",
-			DOT_STYLE,
+			DotStyle,
 		},
 	}
 
@@ -117,13 +117,13 @@ func TestFlattenString(t *testing.T) {
 			`{ "a": "b" }`,
 			`{ "a": "b" }`,
 			"",
-			DOT_STYLE,
+			DotStyle,
 		},
 		{
 			`{ "a": { "b" : { "c" : { "d" : "e" } } }, "number": 1.4567, "bool": true }`,
 			`{ "a.b.c.d": "e", "bool": true, "number": 1.4567 }`,
 			"",
-			DOT_STYLE,
+			DotStyle,
 		},
 	}
 
