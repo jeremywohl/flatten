@@ -27,7 +27,7 @@
 //			"d": "e",
 //			"f": "g",
 //		},
-//		"z": 1.4567
+//		"z": 1.4567,
 //	}
 //
 //	flat, err := Flatten(nested, "", RailsStyle)
