@@ -4,10 +4,11 @@ flatten
 [![GoDoc](https://godoc.org/github.com/jeremywohl/flatten?status.png)](https://godoc.org/github.com/jeremywohl/flatten)
 [![Build Status](https://travis-ci.org/jeremywohl/flatten.svg?branch=master)](https://travis-ci.org/jeremywohl/flatten)
 
-Flatten makes flat, one-dimensional maps from arbitrarily nested ones, from JSON strings or Go native structures.  It can handles interior maps, slices and scalars.
+Flatten makes flat, one-dimensional maps from arbitrarily nested ones.
 
-Intended for JSON APIs, flatten operates on interior maps, slices and scalars.  Flat, compound
-keys are generated in either dotted style (e.g. a.b.1.c) or Rails-like (e.g. a[b][1][c]).
+Map keys turn into compound
+names, like `a.b.1.c` (dotted style) or `a[b][1][c]` (Rails style).  It takes input as either JSON strings or
+Go structures.  It knows how to traverse JSON types: maps, slices and scalars.
 
 You can flatten JSON strings.
 
