@@ -80,6 +80,40 @@ func TestFlatten(t *testing.T) {
 			RailsStyle,
 		},
 		{
+			`{
+				"foo": {
+					"jim":"bean"
+				},
+				"fee": "bar",
+				"n1": {
+					"alist": [
+						"a",
+						"b",
+						"c",
+						{
+							"d": "other",
+							"e": "another"
+						}
+					]
+				},
+				"number": 1.4567,
+				"bool":   true
+			}`,
+			map[string]interface{}{
+				"foo/jim":      "bean",
+				"fee":          "bar",
+				"n1/alist/0":   "a",
+				"n1/alist/1":   "b",
+				"n1/alist/2":   "c",
+				"n1/alist/3/d": "other",
+				"n1/alist/3/e": "another",
+				"number":       1.4567,
+				"bool":         true,
+			},
+			"",
+			PathStyle,
+		},
+		{
 			`{ "a": { "b": "c" }, "e": "f" }`,
 			map[string]interface{}{
 				"p:a.b": "c",
@@ -124,6 +158,12 @@ func TestFlattenString(t *testing.T) {
 			`{ "a.b.c.d": "e", "bool": true, "number": 1.4567 }`,
 			"",
 			DotStyle,
+		},
+		{
+			`{ "a": { "b" : { "c" : { "d" : "e" } } }, "number": 1.4567, "bool": true }`,
+			`{ "a/b/c/d": "e", "bool": true, "number": 1.4567 }`,
+			"",
+			PathStyle,
 		},
 	}
 
