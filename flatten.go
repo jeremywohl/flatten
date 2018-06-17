@@ -1,8 +1,8 @@
 // Flatten makes flat, one-dimensional maps from arbitrarily nested ones.
 //
-// Map keys turn into compound
-// names, like `a.b.1.c` (dotted style), `a[b][1][c]` (Rails style) or `a/b/1/c` (path style).  It takes input as either JSON strings or
-// Go structures.  It (only) knows how to traverse JSON types: maps, slices and scalars.
+// It turns map keys into compound
+// names, in three styles: dotted (`a.b.1.c`), path-like (`a/b/1/c`), or Rails (`a[b][1][c]`).  It takes input as either JSON strings or
+// Go structures.  It knows how to traverse these JSON types: objects/maps, arrays and scalars.
 //
 // You can flatten JSON strings.
 //
@@ -57,6 +57,9 @@ const (
 
 	// Separate nested key components with dots, e.g. "a.b.1.c.d"
 	DotStyle
+
+	// Separate with path-like slashes, e.g. a/b/1/c/d
+	PathStyle
 
 	// Separate ala Rails, e.g. "a[b][c][1][d]"
 	RailsStyle
@@ -146,6 +149,8 @@ func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
 		switch style {
 		case DotStyle:
 			key += "." + subkey
+		case PathStyle:
+			key += "/" + subkey
 		case RailsStyle:
 			key += "[" + subkey + "]"
 		case PathStyle:
