@@ -63,6 +63,9 @@ const (
 
 	// Separate ala Rails, e.g. "a[b][c][1][d]"
 	RailsStyle
+
+	// Separate nested key elements with slashes (path), e.g. a/b/1/c/d
+	PathStyle
 )
 
 // Nested input must be a map or slice
@@ -150,6 +153,8 @@ func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
 			key += "/" + subkey
 		case RailsStyle:
 			key += "[" + subkey + "]"
+		case PathStyle:
+			key += "/" + subkey
 		}
 	}
 
