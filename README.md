@@ -23,7 +23,7 @@ nested := `{
   "side": "value"
 }`
 
-flat, err := FlattenString(nested, "", DOT_STYLE)
+flat, err := flatten.FlattenString(nested, "", flatten.DotStyle)
 
 // output: `{ "one.two.0": "2a", "one.two.1": "2b", "side": "value" }`
 ```
@@ -40,7 +40,7 @@ t := map[string]interface{}{
    "z": 1.4567,
 }
 
-flat, err := Flatten(nested, "", RAILS_STYLE)
+flat, err := flatten.Flatten(nested, "", flatten.RailsStyle)
 
 // output:
 // map[string]interface{}{
