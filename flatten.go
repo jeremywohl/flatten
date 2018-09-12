@@ -63,6 +63,9 @@ const (
 
 	// Separate ala Rails, e.g. "a[b][c][1][d]"
 	RailsStyle
+
+	// Separate nested key components with _, e.g. "a_b_1_c_d"
+	UnderscoreStyle
 )
 
 // Nested input must be a map or slice
@@ -150,6 +153,8 @@ func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
 			key += "/" + subkey
 		case RailsStyle:
 			key += "[" + subkey + "]"
+		case UnderscoreStyle:
+			key += "_" + subkey
 		}
 	}
 
