@@ -16,13 +16,13 @@
 //	  "side": "value"
 //	}`
 //
-//	flat, err := FlattenString(nested, "", DotStyle)
+//	flat, err := flatten.FlattenString(nested, "", flatten.DotStyle)
 //
 //	// output: `{ "one.two.0": "2a", "one.two.1": "2b", "side": "value" }`
 //
 // Or Go maps directly.
 //
-//	t := map[string]interface{}{
+//	nested := map[string]interface{}{
 //		"a": "b",
 //		"c": map[string]interface{}{
 //			"d": "e",
@@ -31,7 +31,7 @@
 //		"z": 1.4567,
 //	}
 //
-//	flat, err := Flatten(nested, "", RailsStyle)
+//	flat, err := flatten.Flatten(nested, "", flatten.RailsStyle)
 //
 //	// output:
 //	// map[string]interface{}{
