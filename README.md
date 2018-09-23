@@ -7,7 +7,7 @@ flatten
 Flatten makes flat, one-dimensional maps from arbitrarily nested ones.
 
 It turns map keys into compound
-names, in three styles: dotted (`a.b.1.c`), path-like (`a/b/1/c`), or Rails (`a[b][1][c]`).  It takes input as either JSON strings or
+names, in four styles: dotted (`a.b.1.c`), path-like (`a/b/1/c`), Rails (`a[b][1][c]`), or with underscores (`a_b_1_c`).  It takes input as either JSON strings or
 Go structures.  It knows how to traverse these JSON types: objects/maps, arrays and scalars.
 
 You can flatten JSON strings.

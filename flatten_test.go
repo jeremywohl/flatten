@@ -122,6 +122,40 @@ func TestFlatten(t *testing.T) {
 			"p:",
 			DotStyle,
 		},
+		{
+			`{
+				"foo": {
+					"jim":"bean"
+				},
+				"fee": "bar",
+				"n1": {
+					"alist": [
+						"a",
+						"b",
+						"c",
+						{
+							"d": "other",
+							"e": "another"
+						}
+					]
+				},
+				"number": 1.4567,
+				"bool":   true
+			}`,
+			map[string]interface{}{
+				"foo_jim":      "bean",
+				"fee":          "bar",
+				"n1_alist_0":   "a",
+				"n1_alist_1":   "b",
+				"n1_alist_2":   "c",
+				"n1_alist_3_d": "other",
+				"n1_alist_3_e": "another",
+				"number":       1.4567,
+				"bool":         true,
+			},
+			"",
+			UnderscoreStyle,
+		},
 	}
 
 	for i, test := range cases {
