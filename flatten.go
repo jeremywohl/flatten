@@ -66,6 +66,9 @@ const (
 
 	// Separate with underscores, e.g. "a_b_1_c_d"
 	UnderscoreStyle
+
+	// Separate with double underscores, e.g. "a__b__1__c__d"
+	DunderscoreStyle
 )
 
 // Nested input must be a map or slice
@@ -155,6 +158,8 @@ func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
 			key += "[" + subkey + "]"
 		case UnderscoreStyle:
 			key += "_" + subkey
+		case DunderscoreStyle:
+			key += "__" + subkey
 		}
 	}
 
