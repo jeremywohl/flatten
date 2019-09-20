@@ -1,46 +1,3 @@
-// Flatten makes flat, one-dimensional maps from arbitrarily nested ones.
-//
-// It turns map keys into compound
-// names, in four styles: dotted (`a.b.1.c`), path-like (`a/b/1/c`), Rails (`a[b][1][c]`), or with underscores (`a_b_1_c`).  It takes input as either JSON strings or
-// Go structures.  It knows how to traverse these JSON types: objects/maps, arrays and scalars.
-//
-// You can flatten JSON strings.
-//
-//	nested := `{
-//	  "one": {
-//	    "two": [
-//	      "2a",
-//	      "2b"
-//	    ]
-//	  },
-//	  "side": "value"
-//	}`
-//
-//	flat, err := flatten.FlattenString(nested, "", flatten.DotStyle)
-//
-//	// output: `{ "one.two.0": "2a", "one.two.1": "2b", "side": "value" }`
-//
-// Or Go maps directly.
-//
-//	nested := map[string]interface{}{
-//		"a": "b",
-//		"c": map[string]interface{}{
-//			"d": "e",
-//			"f": "g",
-//		},
-//		"z": 1.4567,
-//	}
-//
-//	flat, err := flatten.Flatten(nested, "", flatten.RailsStyle)
-//
-//	// output:
-//	// map[string]interface{}{
-//	//	"a":    "b",
-//	//	"c[d]": "e",
-//	//	"c[f]": "g",
-//	//	"z":    1.4567,
-//	// }
-//
 package flatten
 
 import (
@@ -49,23 +6,33 @@ import (
 	"strconv"
 )
 
-// The presentation style of keys.
-type SeparatorStyle int
+// The style of keys.  See the following struct.  If there is an input with two
+// nested keys "f" and "g", with "f" at the root,
+//    { "f": { "g": ... } }
+// the output will be the concatenation
+//    f{Middle}{Before}g{After}...
+// Any struct element may be blank.
+// If you use Middle, you will probably leave Before & After blank, and vice-versa.
+// See examples in the "Default styles" variables.
+type SeparatorStyle struct {
+	Before string // Prepend to key
+	Middle string // Add between keys
+	After  string // Append to key
+}
 
-const (
-	_ SeparatorStyle = iota
-
+// Default styles
+var (
 	// Separate nested key components with dots, e.g. "a.b.1.c.d"
-	DotStyle
+	DotStyle = SeparatorStyle{Middle: "."}
 
 	// Separate with path-like slashes, e.g. a/b/1/c/d
-	PathStyle
+	PathStyle = SeparatorStyle{Middle: "/"}
 
 	// Separate ala Rails, e.g. "a[b][c][1][d]"
-	RailsStyle
+	RailsStyle = SeparatorStyle{Before: "[", After: "]"}
 
 	// Separate with underscores, e.g. "a_b_1_c_d"
-	UnderscoreStyle
+	UnderscoreStyle = SeparatorStyle{Middle: "_"}
 )
 
 // Nested input must be a map or slice
@@ -146,16 +113,7 @@ func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
 	if top {
 		key += subkey
 	} else {
-		switch style {
-		case DotStyle:
-			key += "." + subkey
-		case PathStyle:
-			key += "/" + subkey
-		case RailsStyle:
-			key += "[" + subkey + "]"
-		case UnderscoreStyle:
-			key += "_" + subkey
-		}
+		key += style.Before + style.Middle + subkey + style.After
 	}
 
 	return key

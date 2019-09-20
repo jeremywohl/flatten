@@ -199,6 +199,18 @@ func TestFlattenString(t *testing.T) {
 			"",
 			PathStyle,
 		},
+		{
+			`{ "a": { "b" : { "c" : { "d" : "e" } } } }`,
+			`{ "a--b--c--d": "e" }`,
+			"",
+			SeparatorStyle{Middle: "--"}, // emdash
+		},
+		{
+			`{ "a": { "b" : { "c" : { "d" : "e" } } } }`,
+			`{ "a(b)(c)(d)": "e" }`,
+			"",
+			SeparatorStyle{Before: "(", After: ")"}, // paren groupings
+		},
 	}
 
 	for i, test := range cases {
