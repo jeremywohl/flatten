@@ -3,6 +3,7 @@ package flatten
 import (
 	"encoding/json"
 	"errors"
+	"regexp"
 	"strconv"
 )
 
@@ -52,10 +53,19 @@ func Flatten(nested map[string]interface{}, prefix string, style SeparatorStyle)
 	return flatmap, nil
 }
 
+// JSON nested input must be a map
+var NotValidJsonInputError = errors.New("Not a valid input, must be a map")
+
+var isJsonMap = regexp.MustCompile(`^\s*\{`)
+
 // FlattenString generates a flat JSON map from a nested one.  Keys in the flat map will be a compound of
 // descending map keys and slice iterations.  The presentation of keys is set by style.  A prefix is joined
 // to each key.
 func FlattenString(nestedstr, prefix string, style SeparatorStyle) (string, error) {
+	if !isJsonMap.MatchString(nestedstr) {
+		return "", NotValidJsonInputError
+	}
+
 	var nested map[string]interface{}
 	err := json.Unmarshal([]byte(nestedstr), &nested)
 	if err != nil {

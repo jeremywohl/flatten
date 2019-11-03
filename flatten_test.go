@@ -163,13 +163,15 @@ func TestFlatten(t *testing.T) {
 		err := json.Unmarshal([]byte(test.test), &m)
 		if err != nil {
 			t.Errorf("%d: failed to unmarshal test: %v", i+1, err)
+			continue
 		}
 		got, err := Flatten(m.(map[string]interface{}), test.prefix, test.style)
 		if err != nil {
 			t.Errorf("%d: failed to flatten: %v", i+1, err)
+			continue
 		}
 		if !reflect.DeepEqual(got, test.want) {
-			t.Errorf("%d: mismatch, got: %v want: %v", i+1, got, test.want)
+			t.Errorf("%d: mismatch, got: %v wanted: %v", i+1, got, test.want)
 		}
 	}
 }
@@ -180,43 +182,120 @@ func TestFlattenString(t *testing.T) {
 		want   string
 		prefix string
 		style  SeparatorStyle
+		err    error
 	}{
+		// 1
 		{
 			`{ "a": "b" }`,
 			`{ "a": "b" }`,
 			"",
 			DotStyle,
+			nil,
 		},
+		// 2
 		{
 			`{ "a": { "b" : { "c" : { "d" : "e" } } }, "number": 1.4567, "bool": true }`,
 			`{ "a.b.c.d": "e", "bool": true, "number": 1.4567 }`,
 			"",
 			DotStyle,
+			nil,
 		},
+		// 3
 		{
 			`{ "a": { "b" : { "c" : { "d" : "e" } } }, "number": 1.4567, "bool": true }`,
 			`{ "a/b/c/d": "e", "bool": true, "number": 1.4567 }`,
 			"",
 			PathStyle,
+			nil,
 		},
+		// 4
 		{
 			`{ "a": { "b" : { "c" : { "d" : "e" } } } }`,
 			`{ "a--b--c--d": "e" }`,
 			"",
 			SeparatorStyle{Middle: "--"}, // emdash
+			nil,
 		},
+		// 5
 		{
 			`{ "a": { "b" : { "c" : { "d" : "e" } } } }`,
 			`{ "a(b)(c)(d)": "e" }`,
 			"",
 			SeparatorStyle{Before: "(", After: ")"}, // paren groupings
+			nil,
+		},
+		// 6 -- with leading whitespace
+		{
+			`
+			  	{ "a": { "b" : { "c" : { "d" : "e" } } } }`,
+			`{ "a(b)(c)(d)": "e" }`,
+			"",
+			SeparatorStyle{Before: "(", After: ")"}, // paren groupings
+			nil,
+		},
+
+		//
+		// Valid JSON text, but invalid for FlattenString
+		//
+
+		// 7
+		{
+			`[ "a": { "b": "c" }, "d" ]`,
+			`bogus`,
+			"",
+			PathStyle,
+			NotValidJsonInputError,
+		},
+		// 8
+		{
+			``,
+			`bogus`,
+			"",
+			PathStyle,
+			NotValidJsonInputError,
+		},
+		// 9
+		{
+			`astring`,
+			`bogus`,
+			"",
+			PathStyle,
+			NotValidJsonInputError,
+		},
+		// 10
+		{
+			`false`,
+			`bogus`,
+			"",
+			PathStyle,
+			NotValidJsonInputError,
+		},
+		// 11
+		{
+			`42`,
+			`bogus`,
+			"",
+			PathStyle,
+			NotValidJsonInputError,
+		},
+		// 12 -- prior to version 1.0.1, this was accepted & unmarshalled as an empty map, finally returning `{}`.
+		{
+			`null`,
+			`{}`,
+			"",
+			PathStyle,
+			NotValidJsonInputError,
 		},
 	}
 
 	for i, test := range cases {
 		got, err := FlattenString(test.test, test.prefix, test.style)
+		if err != test.err {
+			t.Errorf("%d: error mismatch, got: [%v], wanted: [%v]", i+1, err, test.err)
+			continue
+		}
 		if err != nil {
-			t.Errorf("%d: failed to flatten: %v", i+1, err)
+			continue
 		}
 
 		nixws := func(r rune) rune {
@@ -227,7 +306,7 @@ func TestFlattenString(t *testing.T) {
 		}
 
 		if got != strings.Map(nixws, test.want) {
-			t.Errorf("%d: mismatch, got: %v want: %v", i+1, got, test.want)
+			t.Errorf("%d: mismatch, got: %v wanted: %v", i+1, got, test.want)
 		}
 	}
 }
