@@ -3,6 +3,7 @@ package flatten
 import (
 	"encoding/json"
 	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 	"unicode"
@@ -10,10 +11,10 @@ import (
 
 func TestFlatten(t *testing.T) {
 	cases := []struct {
-		test   string
-		want   map[string]interface{}
-		prefix string
-		style  SeparatorStyle
+		test      string
+		want      map[string]interface{}
+		prefix    string
+		keyMerger KeyMerger
 	}{
 		{
 			`{
@@ -156,6 +157,48 @@ func TestFlatten(t *testing.T) {
 			"",
 			UnderscoreStyle,
 		},
+		{
+			`{
+				"a": "b",
+				"c": {
+					"d":"e"
+				},
+				"f_g": "h",
+				"i_j": "k_l",
+				"m_n": {
+					"o_p": "q",
+					"r_s": "t_u"
+				}
+			}`,
+			map[string]interface{}{
+				"a": "b",
+				"c_d": "e",
+				"f__g": "h",
+				"i__j": "k_l",
+				"m__n_o__p": "q",
+				"m__n_r__s": "t_u",
+			},
+			"",
+			FuncMerger(func(top bool, key, subkey string) string {
+				escapeDots := func (s string) string {
+					var r1 = regexp.MustCompile(`(_)`)
+					s = r1.ReplaceAllString(s, `$1$1`)
+
+					var r2 = regexp.MustCompile(`(\.{2,})`)
+					s = r2.ReplaceAllString(s, `$1$1`)
+
+					return strings.Replace(s, ".", "_", -1)
+				}
+
+				if top {
+					key += escapeDots(subkey)
+				} else {
+					key += "_" + escapeDots(subkey)
+				}
+
+				return key
+			}),
+		},
 	}
 
 	for i, test := range cases {
@@ -165,7 +208,7 @@ func TestFlatten(t *testing.T) {
 			t.Errorf("%d: failed to unmarshal test: %v", i+1, err)
 			continue
 		}
-		got, err := Flatten(m.(map[string]interface{}), test.prefix, test.style)
+		got, err := Flatten(m.(map[string]interface{}), test.prefix, test.keyMerger)
 		if err != nil {
 			t.Errorf("%d: failed to flatten: %v", i+1, err)
 			continue
@@ -178,11 +221,11 @@ func TestFlatten(t *testing.T) {
 
 func TestFlattenString(t *testing.T) {
 	cases := []struct {
-		test   string
-		want   string
-		prefix string
-		style  SeparatorStyle
-		err    error
+		test      string
+		want      string
+		prefix    string
+		keyMerger KeyMerger
+		err       error
 	}{
 		// 1
 		{
@@ -289,7 +332,7 @@ func TestFlattenString(t *testing.T) {
 	}
 
 	for i, test := range cases {
-		got, err := FlattenString(test.test, test.prefix, test.style)
+		got, err := FlattenString(test.test, test.prefix, test.keyMerger)
 		if err != test.err {
 			t.Errorf("%d: error mismatch, got: [%v], wanted: [%v]", i+1, err, test.err)
 			continue
