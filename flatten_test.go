@@ -171,7 +171,7 @@ func TestFlatten(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(got, test.want) {
-			t.Errorf("%d: mismatch, got: %v wanted: %v", i+1, got, test.want)
+			t.Errorf("%d: mismatch, got: %#v wanted: %#v", i+1, got, test.want)
 		}
 	}
 }
@@ -306,7 +306,7 @@ func TestFlattenString(t *testing.T) {
 		}
 
 		if got != strings.Map(nixws, test.want) {
-			t.Errorf("%d: mismatch, got: %v wanted: %v", i+1, got, test.want)
+			t.Errorf("%d: mismatch, got: %#v wanted: %#v", i+1, got, test.want)
 		}
 	}
 }
