@@ -30,6 +30,11 @@ func TestFlatten(t *testing.T) {
 							"d": "other",
 							"e": "another"
 						}
+					],
+					"ilist": [
+						1,
+						2,
+						3
 					]
 				},
 				"number": 1.4567,
@@ -43,6 +48,9 @@ func TestFlatten(t *testing.T) {
 				"n1.alist.2":   "c",
 				"n1.alist.3.d": "other",
 				"n1.alist.3.e": "another",
+				"n1.ilist.0":   float64(1),
+				"n1.ilist.1":   float64(2),
+				"n1.ilist.2":   float64(3),
 				"number":       1.4567,
 				"bool":         true,
 			},
@@ -155,6 +163,76 @@ func TestFlatten(t *testing.T) {
 			},
 			"",
 			UnderscoreStyle,
+		},
+		{
+			`{
+				"foo": {
+					"jim":"bean"
+				},
+				"fee": "bar",
+				"n1": {
+					"alist": [
+						"a",
+						"b",
+						"c"
+					],
+					"ilist": [
+						1,
+						2,
+						3
+					]
+				},
+				"number": 1.4567,
+				"bool":   true
+			}`,
+			map[string]interface{}{
+				"foo.jim": "bean",
+				"fee":     "bar",
+				"n1.alist": []interface{}{
+					"a",
+					"b",
+					"c",
+				},
+				"n1.ilist": []interface{}{
+					float64(1),
+					float64(2),
+					float64(3),
+				},
+				"number": 1.4567,
+				"bool":   true,
+			},
+			"",
+			SeparatorStyle{
+				Middle:                      ".",
+				DoNotFlattenPrimitiveArrays: true,
+			},
+		},
+		{
+			`{
+				"foo": [
+					1,
+					2,
+					3
+				],
+				"fee": "bar",
+				"number": 1.4567,
+				"bool":   true
+			}`,
+			map[string]interface{}{
+				"foo": []interface{}{
+					float64(1),
+					float64(2),
+					float64(3),
+				},
+				"fee":    "bar",
+				"number": 1.4567,
+				"bool":   true,
+			},
+			"",
+			SeparatorStyle{
+				Middle:                      ".",
+				DoNotFlattenPrimitiveArrays: true,
+			},
 		},
 	}
 
