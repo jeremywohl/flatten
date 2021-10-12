@@ -10,7 +10,7 @@ import (
 
 func TestFlatten(t *testing.T) {
 	cases := []struct {
-		test   string
+		test   interface{}
 		want   map[string]interface{}
 		prefix string
 		style  SeparatorStyle
@@ -156,15 +156,35 @@ func TestFlatten(t *testing.T) {
 			"",
 			UnderscoreStyle,
 		},
+		{
+			map[string]interface{}{
+				"environments": []map[string]interface{}{{
+					"dev": []map[string]interface{}{{
+						"spacestation": "abcdefg",
+					}},
+				}}},
+			map[string]interface{}{
+				"environments.0.dev.0.spacestation": "abcdefg",
+			},
+			"",
+			DotStyle,
+		},
 	}
 
 	for i, test := range cases {
 		var m interface{}
-		err := json.Unmarshal([]byte(test.test), &m)
-		if err != nil {
-			t.Errorf("%d: failed to unmarshal test: %v", i+1, err)
-			continue
+
+		switch test.test.(type) {
+		case string:
+			err := json.Unmarshal([]byte(test.test.(string)), &m)
+			if err != nil {
+				t.Errorf("%d: failed to unmarshal test: %v", i+1, err)
+				continue
+			}
+		default:
+			m = test.test
 		}
+
 		got, err := Flatten(m.(map[string]interface{}), test.prefix, test.style)
 		if err != nil {
 			t.Errorf("%d: failed to flatten: %v", i+1, err)

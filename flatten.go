@@ -88,7 +88,7 @@ func FlattenString(nestedstr, prefix string, style SeparatorStyle) (string, erro
 func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefix string, style SeparatorStyle) error {
 	assign := func(newKey string, v interface{}) error {
 		switch v.(type) {
-		case map[string]interface{}, []interface{}:
+		case map[string]interface{}, []map[string]interface{}, []interface{}:
 			if err := flatten(false, flatMap, v, newKey, style); err != nil {
 				return err
 			}
@@ -103,6 +103,11 @@ func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefi
 	case map[string]interface{}:
 		for k, v := range nested.(map[string]interface{}) {
 			newKey := enkey(top, prefix, k, style)
+			assign(newKey, v)
+		}
+	case []map[string]interface{}:
+		for i, v := range nested.([]map[string]interface{}) {
+			newKey := enkey(top, prefix, strconv.Itoa(i), style)
 			assign(newKey, v)
 		}
 	case []interface{}:
