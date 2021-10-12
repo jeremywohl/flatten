@@ -4,8 +4,6 @@ flatten
 [![GoDoc](https://godoc.org/github.com/jeremywohl/flatten?status.png)](https://godoc.org/github.com/jeremywohl/flatten)
 [![Build Status](https://travis-ci.org/jeremywohl/flatten.svg?branch=master)](https://travis-ci.org/jeremywohl/flatten)
 
-**Note: development continues in [v2](/v2)**
-
 Flatten makes flat, one-dimensional maps from arbitrarily nested ones.
 
 It turns map keys into compound
