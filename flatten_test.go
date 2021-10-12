@@ -15,6 +15,7 @@ func TestFlatten(t *testing.T) {
 		prefix string
 		style  SeparatorStyle
 	}{
+		// 1
 		{
 			`{
 				"foo": {
@@ -49,6 +50,7 @@ func TestFlatten(t *testing.T) {
 			"",
 			DotStyle,
 		},
+		// 2
 		{
 			`{
 				"foo": {
@@ -79,6 +81,7 @@ func TestFlatten(t *testing.T) {
 			"",
 			RailsStyle,
 		},
+		// 3
 		{
 			`{
 				"foo": {
@@ -113,6 +116,7 @@ func TestFlatten(t *testing.T) {
 			"",
 			PathStyle,
 		},
+		// 4
 		{
 			`{ "a": { "b": "c" }, "e": "f" }`,
 			map[string]interface{}{
@@ -122,6 +126,7 @@ func TestFlatten(t *testing.T) {
 			"p:",
 			DotStyle,
 		},
+		// 5
 		{
 			`{
 				"foo": {
@@ -154,6 +159,41 @@ func TestFlatten(t *testing.T) {
 				"bool":         true,
 			},
 			"",
+			UnderscoreStyle,
+		},
+		// 6 -- try a prefix
+		{
+			`{
+				"foo": {
+					"jim":"bean"
+				},
+				"fee": "bar",
+				"n1": {
+					"alist": [
+						"a",
+						"b",
+						"c",
+						{
+							"d": "other",
+							"e": "another"
+						}
+					]
+				},
+				"number": 1.4567,
+				"bool":   true
+			}`,
+			map[string]interface{}{
+				"flag-foo_jim":      "bean",
+				"flag-fee":          "bar",
+				"flag-n1_alist_0":   "a",
+				"flag-n1_alist_1":   "b",
+				"flag-n1_alist_2":   "c",
+				"flag-n1_alist_3_d": "other",
+				"flag-n1_alist_3_e": "another",
+				"flag-number":       1.4567,
+				"flag-bool":         true,
+			},
+			"flag-",
 			UnderscoreStyle,
 		},
 	}
@@ -285,6 +325,14 @@ func TestFlattenString(t *testing.T) {
 			"",
 			PathStyle,
 			NotValidJsonInputError,
+		},
+		// 13 -- try a prefix
+		{
+			`{ "a": { "b" : { "c" : { "d" : "e" } } }, "number": 1.4567, "bool": true }`,
+			`{ "flag-a.b.c.d": "e", "flag-bool": true, "flag-number": 1.4567 }`,
+			"flag-",
+			DotStyle,
+			nil,
 		},
 	}
 
