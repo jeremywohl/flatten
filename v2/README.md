@@ -1,8 +1,7 @@
 flatten
 =======
 
-[![GoDoc](https://godoc.org/github.com/jeremywohl/flatten?status.png)](https://godoc.org/github.com/jeremywohl/flatten)
-[![Build Status](https://travis-ci.org/jeremywohl/flatten.svg?branch=master)](https://travis-ci.org/jeremywohl/flatten)
+[![Go Reference](https://pkg.go.dev/badge/pkg.go.dev/github.com/jeremywohl/flatten/v2.svg)](https://pkg.go.dev/pkg.go.dev/github.com/jeremywohl/flatten/v2)
 
 Flatten makes flat, one-dimensional maps from arbitrarily nested ones.
 
