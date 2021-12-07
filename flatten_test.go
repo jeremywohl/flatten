@@ -334,6 +334,28 @@ func TestFlattenString(t *testing.T) {
 			DotStyle,
 			nil,
 		},
+		// 14 -- json path style
+		{
+			`{ "a": { "b" : { "array" : [ "d" , "e" ] } }, "number": 1.4567,"bool": true }`,
+			`{ "flag-a.b.array[0]":"d","flag-a.b.array[1]": "e","flag-bool": true,"flag-number": 1.4567 }`,
+			"flag-",
+			SeparatorStyle{
+				Middle:                   ".",
+				UseBracketsForArrayIndex: true,
+			},
+			nil,
+		},
+		// 14 -- json path style with array of objects
+		{
+			`{ "a": { "b" : { "array" : [ { "d" : "e" } ] } }, "number": 1.4567,"bool": true }`,
+			`{ "flag-a.b.array[0].d": "e","flag-bool": true,"flag-number": 1.4567 }`,
+			"flag-",
+			SeparatorStyle{
+				Middle:                   ".",
+				UseBracketsForArrayIndex: true,
+			},
+			nil,
+		},
 	}
 
 	for i, test := range cases {

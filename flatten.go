@@ -19,6 +19,8 @@ type SeparatorStyle struct {
 	Before string // Prepend to key
 	Middle string // Add between keys
 	After  string // Append to key
+
+	UseBracketsForArrayIndex bool
 }
 
 // Default styles
@@ -102,12 +104,12 @@ func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefi
 	switch nested.(type) {
 	case map[string]interface{}:
 		for k, v := range nested.(map[string]interface{}) {
-			newKey := enkey(top, prefix, k, style)
+			newKey := enkey(top, false, prefix, k, style)
 			assign(newKey, v)
 		}
 	case []interface{}:
 		for i, v := range nested.([]interface{}) {
-			newKey := enkey(top, prefix, strconv.Itoa(i), style)
+			newKey := enkey(top, true, prefix, strconv.Itoa(i), style)
 			assign(newKey, v)
 		}
 	default:
@@ -117,13 +119,17 @@ func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefi
 	return nil
 }
 
-func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
+func enkey(top, arrayIndex bool, prefix, subkey string, style SeparatorStyle) string {
 	key := prefix
 
 	if top {
 		key += subkey
 	} else {
-		key += style.Before + style.Middle + subkey + style.After
+		if arrayIndex && style.UseBracketsForArrayIndex {
+			key += "[" + subkey + "]"
+		} else {
+			key += style.Before + style.Middle + subkey + style.After
+		}
 	}
 
 	return key
